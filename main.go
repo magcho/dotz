@@ -2,11 +2,14 @@ package main
 
 import (
 	"fmt"
+	// "github.com/go-yaml/yaml"
 	"github.com/urfave/cli"
+	// "io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+  "time"
 )
 
 func FolderExists(filename string) bool {
@@ -120,14 +123,35 @@ func main() {
 			Name:    "backup",
 			Aliases: []string{"b"},
 			Usage:   "backup tracked files",
+      Flags: []cli.Flag{
+        cli.BoolFlag{
+          Name: "push, p",
+          Usage: "enable `git push`",
+        },
+      },
 			Action: func(c *cli.Context) error {
 
-				if c.NArg() < 1 {
-					fmt.Println("require ")
-				}
-				for i := 0; i <= c.NArg(); i++ {
-					fmt.Println(c.Args().Get(i))
-				}
+        out, _ := exec.Command("git", "-C", DOTZ_ROOT, "status", "-z").Output()
+        
+
+        if len(out) != 0 {
+          // stageに変更があるとき
+          exec.Command("git", "-C", DOTZ_ROOT, "add", "-A").Run()
+
+          commitMessage := "[dotz][backup] " + time.Now().Format("2006-01-02 15:04'05")
+          fmt.Println(commitMessage)
+          exec.Command("git", "-C", DOTZ_ROOT, "commit", "-m", commitMessage).Run()
+
+        }else{
+          fmt.Println("No change")
+        }
+
+        
+        if c.Bool("push"){
+          exec.Command("git", "-C", DOTZ_ROOT, "push").Run()
+          fmt.Println("pushed")
+        }
+				
 				return nil
 			},
 		},
