@@ -1,52 +1,54 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/urfave/cli"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
 	"time"
-  "bytes"
-  "io/ioutil"
-  // "reflect"
+)
+
+var (
+	DOTZ_ROOT string
+	HOME      string
+	CONFIG    DotzConfigToml
 )
 
 // yamlから読み込むための構造体を定義
-
 type DotzConfigToml struct {
 	Tracked tracked
 }
-type tracked struct{
-  Files [][]interface{}
+type tracked struct {
+	// Files [][]interface{}
+	Files [][]string
 }
 
-func ReadDotzConf(fileName string) (config DotzConfigToml){
-  var configs DotzConfigToml
-  _, err := toml.DecodeFile(fileName, &configs)
-  if err != nil{
-    fmt.Println(err)
-  }
+func ReadDotzConf(fileName string) (config DotzConfigToml) {
+	var configs DotzConfigToml
+	_, err := toml.DecodeFile(fileName, &configs)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-  return configs
+	return configs
 }
 
-func WriteDotzConf(config DotzConfigToml, filename string){
-   if !FileExists(filename){
-    return
-  }
+func WriteDotzConf(config DotzConfigToml, filePath string) {
 
-  var buff bytes.Buffer
-  if err := toml.NewEncoder(&buff).Encode(config); err != nil{
-    fmt.Println(err)
-  }
-  writeBuff := []byte(buff.String())
-  err := ioutil.WriteFile(filename, writeBuff, 0644)
-  if err != nil {
-    fmt.Println(err)
-  }
+	var buff bytes.Buffer
+	if err := toml.NewEncoder(&buff).Encode(config); err != nil {
+		fmt.Println(err)
+	}
+	writeBuff := []byte(buff.String())
+	err := ioutil.WriteFile(filePath, writeBuff, 0644)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func FolderExists(filename string) bool {
@@ -68,21 +70,55 @@ func FileExists(filename string) bool {
 		return true
 	}
 }
+func createLink(filePath string, DOTZ_ROOT string, printFlag bool) (dotzPath string, err error) {
+	dotzSubDir, fileName := ParseFilePath(filePath)
+
+	if FileExists(DOTZ_ROOT + dotzSubDir + fileName) {
+		fmt.Println(">", filePath, "is file is already tracked")
+		return
+	}
+
+	if !FolderExists(DOTZ_ROOT + dotzSubDir) {
+		exec.Command("mkdir", "-p", DOTZ_ROOT+dotzSubDir).Run()
+	}
+	exec.Command("mv", filePath, DOTZ_ROOT+dotzSubDir+fileName).Run()
+	fmt.Println(dotzSubDir + fileName)
+
+	if printFlag {
+		out, _ := exec.Command("ln", "-sv", DOTZ_ROOT+fileName, HOME+dotzSubDir+fileName).Output()
+		fmt.Printf("%s\n", out)
+	} else {
+		exec.Command("ln", "-s", DOTZ_ROOT+fileName, HOME+dotzSubDir+fileName).Run()
+	}
+	return DOTZ_ROOT + dotzSubDir + fileName, nil
+}
 
 func ParseFilePath(path string) (string, string) {
+	path = strings.Replace(path, HOME, "", 1)
+
 	r := regexp.MustCompile(`\s*/\s*`)
 
 	result := r.Split(path, -1)
 	fileName := result[len(result)-1]
-	dirPath := strings.Join(result[:len(result)-2], "/") + "/"
-	return dirPath, fileName
+
+	subDirPath := strings.Replace(path, fileName, "", 1)
+	return subDirPath, fileName
+}
+
+func replaceHomePath2Tilde(origin string) string {
+	return strings.Replace(origin, HOME, "~/", 1)
+}
+func replaceTilde2HomePath(origin string) string {
+	return strings.Replace(origin, "~/", HOME, 1)
+}
+func replaceDotzPath2Slash(origin string) string {
+	return strings.Replace(origin, DOTZ_ROOT, "//", 1)
+}
+func replaceSlash2DotzPath(origin string) string {
+	return strings.Replace(origin, "//", DOTZ_ROOT, 1)
 }
 
 func main() {
-	var (
-		DOTZ_ROOT string
-		HOME      string
-	)
 
 	app := cli.NewApp()
 	app.Name = "dotz"
@@ -118,6 +154,14 @@ func main() {
 		if DOTZ_ROOT[len(DOTZ_ROOT)-1:len(DOTZ_ROOT)] != "/" {
 			DOTZ_ROOT = DOTZ_ROOT + "/"
 		}
+		if HOME[len(HOME)-1:len(HOME)] != "/" {
+			HOME = HOME + "/"
+		}
+
+		if FileExists(DOTZ_ROOT + "dotzconfig.toml") {
+			CONFIG = ReadDotzConf(DOTZ_ROOT + "dotzconfig.toml")
+		}
+
 		return nil
 	}
 
@@ -133,6 +177,7 @@ func main() {
 				// 	fmt.Println("require dotz project name")
 				// 	fmt.Println("dotz [init|i]")
 				// 	return nil
+
 				// }
 
 				if !FolderExists(DOTZ_ROOT) {
@@ -153,7 +198,6 @@ func main() {
 			Usage:   "restore dotz project and make symbric link",
 			Action: func(c *cli.Context) error {
 
-				fmt.Println()
 				return nil
 			},
 		},
@@ -195,6 +239,12 @@ func main() {
 			Name:    "track",
 			Aliases: []string{"t"},
 			Usage:   "file append into dotz project",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "silent, s",
+					Usage: "don't print link info",
+				},
+			},
 			Action: func(c *cli.Context) error {
 
 				// 引数がないとき
@@ -204,31 +254,28 @@ func main() {
 				}
 
 				for i := 0; i < c.NArg(); i++ {
-					filePath := c.Args().Get(i)
+					originFilePath := c.Args().Get(i)
+					dotzFilePath, _ := createLink(originFilePath, DOTZ_ROOT, !c.Bool("silent"))
 
-					_, fileName := ParseFilePath(filePath)
-					exec.Command("mv", filePath, DOTZ_ROOT).Run()
-
-					out, _ := exec.Command("ln", "-sv", DOTZ_ROOT+fileName, filePath).Output()
-					fmt.Printf("%s\n", out)
+					CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
+						replaceHomePath2Tilde(originFilePath),
+						replaceDotzPath2Slash(dotzFilePath),
+					})
 				}
 
+				WriteDotzConf(CONFIG, DOTZ_ROOT+"dotzconfig.toml")
 				return nil
 			},
 		},
 	}
 
-	app.Action = func(c *cli.Context) error {
-
-		config := ReadDotzConf("./dotzconfig.toml")
-		// fmt.Println(config)
-
-    WriteDotzConf(config, DOTZ_ROOT+"dotz.toml")
-		return nil
-	}
-
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)
+	}
+
+	app.After = func(c *cli.Context) error {
+		fmt.Println(CONFIG)
+		return nil
 	}
 }
