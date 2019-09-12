@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+  "errors"
 )
 
 var (
@@ -18,6 +19,12 @@ var (
 	HOME      string
 	CONFIG    DotzConfigToml
 )
+var(
+  ErrAlreadyFile = errors.New("this file is already tracked")
+  ErrInputFileTypeIsNotFonund = errors.New("input file type is not found")
+  ErrFilesNotFound = errors.New("files not found")
+)
+
 
 // yamlから読み込むための構造体を定義
 type DotzConfigToml struct {
@@ -76,7 +83,7 @@ func createLink(filePath string, DOTZ_ROOT string, silentFlag bool) (dotzPath st
   
 	if FileExists(DOTZ_ROOT + dotzSubDir + fileName) || FolderExists(DOTZ_ROOT + dotzSubDir + fileName){
 		fmt.Println(">", filePath, "this is already tracked")
-		return
+		return "", ErrAlreadyFile
 	}
 
   if FileExists(filePath){
@@ -88,13 +95,16 @@ func createLink(filePath string, DOTZ_ROOT string, silentFlag bool) (dotzPath st
     exec.Command("mv", filePath, DOTZ_ROOT + dotzSubDir + fileName).Run()
 
     command := exec.Command("ln", "-sv", DOTZ_ROOT + dotzSubDir + fileName, HOME + dotzSubDir + fileName)
-    if !silentFlag {
+
+    if silentFlag {
+      command.Run()
+    }else{
       out, _ := command.Output()
       fmt.Printf("%s\n", out)
-    } else {
-      command.Run()
     }
     return DOTZ_ROOT + dotzSubDir + fileName, nil
+
+    
   }else if FolderExists(filePath){
     leefFolderName := fileName
     exec.Command("mv", filePath, DOTZ_ROOT + dotzSubDir + leefFolderName).Run()
@@ -108,9 +118,11 @@ func createLink(filePath string, DOTZ_ROOT string, silentFlag bool) (dotzPath st
       out, _ := command.Output()
       fmt.Printf("%s\n", out)
     }
-    return 
+    return DOTZ_ROOT + dotzSubDir + leefFolderName ,nil
+    
+  }else{
+    return "", ErrInputFileTypeIsNotFonund
   }
-  return
 }
 
 func ParseFilePath(path string) (string, string) {
@@ -295,31 +307,51 @@ func main() {
 					return nil
 				}
 
-       
+
+        
 				for i := 0; i < c.NArg(); i++ {
 					originFilePath := c.Args().Get(i)
           
           if FileExists(originFilePath){
             // 指定された対象がファイルの時
-            dotzFilePath, _ := createLink(originFilePath, DOTZ_ROOT, !c.Bool("silent"))
+            dotzFilePath, err := createLink(originFilePath, DOTZ_ROOT, !c.Bool("silent"))
 
-            CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
-              replaceHomePath2Tilde(originFilePath),
-              replaceDotzPath2Slash(dotzFilePath),
-            })
+            if err != ErrAlreadyFile{
+              CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
+                replaceHomePath2Tilde(originFilePath),
+                replaceDotzPath2Slash(dotzFilePath),
+              }) 
+            }
+            
           }else if FolderExists(originFilePath){
             // 指定された対象がフォルダの時
+
+            // 引数で渡した時に最後に/をつけるかつけないかのゆらぎを統一
+            // abc/def/ -> abc/def
+            if originFilePath[len(originFilePath) - 1 :len(originFilePath)] == "/"{
+              originFilePath = originFilePath[:len(originFilePath) - 1]
+            }
+
             
             if c.Bool("folder"){
               // fodler オプションを渡している
-              createLink(originFilePath, DOTZ_ROOT, c.Bool("silent"))
+              dotzFolderPath, err :=createLink(originFilePath, DOTZ_ROOT, c.Bool("silent"))
+
+              if err != ErrAlreadyFile{
+                CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
+                  replaceHomePath2Tilde(originFilePath + "/"),
+                  replaceDotzPath2Slash(dotzFolderPath),
+                })
+              }
             }
           }else{
-            fmt.Println("err")
+            return ErrFilesNotFound
           }
 				}
-
-				WriteDotzConf(CONFIG, DOTZ_ROOT+"dotzconfig.toml")
+        
+        WriteDotzConf(CONFIG, DOTZ_ROOT+"dotzconfig.toml")
+        
+        
 				return nil
 			},
 		},
