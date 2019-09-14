@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/urfave/cli"
@@ -11,20 +12,19 @@ import (
 	"regexp"
 	"strings"
 	"time"
-  "errors"
 )
 
 var (
-	DOTZ_ROOT string
-	HOME      string
-	CONFIG    DotzConfigToml
+	DOTZ_ROOT            string
+	HOME                 string
+	DOTZ_CONFIG_FILENAME string = "dotzconfig.toml"
+	CONFIG               DotzConfigToml
 )
-var(
-  ErrAlreadyFile = errors.New("this file is already tracked")
-  ErrInputFileTypeIsNotFonund = errors.New("input file type is not found")
-  ErrFilesNotFound = errors.New("files not found")
+var (
+	ErrAlreadyFile              = errors.New("this file is already tracked")
+	ErrInputFileTypeIsNotFonund = errors.New("input file type is not found")
+	ErrFilesNotFound            = errors.New("files not found")
 )
-
 
 // yamlから読み込むための構造体を定義
 type DotzConfigToml struct {
@@ -60,69 +60,62 @@ func WriteDotzConf(config DotzConfigToml, filePath string) {
 
 func FolderExists(filename string) bool {
 	if f, err := os.Stat(filename); os.IsNotExist(err) || !f.IsDir() {
-		// fmt.Println("ディレクトリは存在しません！")
 		return false
 	} else {
-		// fmt.Println("存在します")
 		return true
 	}
 }
 
 func FileExists(filename string) bool {
 	if f, err := os.Stat(filename); os.IsNotExist(err) || f.IsDir() {
-		// fmt.Println("ファイルは存在しません！")
-		return false
+    return false
 	} else {
-		// fmt.Println("存在するファイルです")
-		return true
+    return true
 	}
 }
 func createLink(filePath string, DOTZ_ROOT string, silentFlag bool) (dotzPath string, err error) {
 	dotzSubDir, fileName := ParseFilePath(filePath)
 
-  
-	if FileExists(DOTZ_ROOT + dotzSubDir + fileName) || FolderExists(DOTZ_ROOT + dotzSubDir + fileName){
-		fmt.Println(">", filePath, "this is already tracked")
+	if FileExists(DOTZ_ROOT+dotzSubDir+fileName) || FolderExists(DOTZ_ROOT+dotzSubDir+fileName) {
+		fmt.Println("> Tracked ", filePath)
 		return "", ErrAlreadyFile
 	}
 
-  if FileExists(filePath){
-    // ファイルのとき
-    if !FolderExists(DOTZ_ROOT + dotzSubDir) {
-      // トラッキング対象がDOTZ_ROOTのサブフォルダにあるときに、サブフォルダを作成する
-      exec.Command("mkdir", "-p", DOTZ_ROOT + dotzSubDir).Run()
-    }
-    exec.Command("mv", filePath, DOTZ_ROOT + dotzSubDir + fileName).Run()
+	if FileExists(filePath) {
+		// ファイルのとき
+		if !FolderExists(DOTZ_ROOT + dotzSubDir) {
+			// トラッキング対象がDOTZ_ROOTのサブフォルダにあるときに、サブフォルダを作成する
+			exec.Command("mkdir", "-p", DOTZ_ROOT+dotzSubDir).Run()
+		}
+		exec.Command("mv", filePath, DOTZ_ROOT+dotzSubDir+fileName).Run()
 
-    command := exec.Command("ln", "-sv", DOTZ_ROOT + dotzSubDir + fileName, HOME + dotzSubDir + fileName)
+		command := exec.Command("ln", "-sv", DOTZ_ROOT+dotzSubDir+fileName, HOME+dotzSubDir+fileName)
 
-    if silentFlag {
-      command.Run()
-    }else{
-      out, _ := command.Output()
-      fmt.Printf("%s\n", out)
-    }
-    return DOTZ_ROOT + dotzSubDir + fileName, nil
+		if silentFlag {
+			command.Run()
+		} else {
+			out, _ := command.Output()
+			fmt.Printf("%s\n", out)
+		}
+		return DOTZ_ROOT + dotzSubDir + fileName, nil
 
-    
-  }else if FolderExists(filePath){
-    leefFolderName := fileName
-    exec.Command("mv", filePath, DOTZ_ROOT + dotzSubDir + leefFolderName).Run()
-    
-    
-    command := exec.Command("ln", "-sv", DOTZ_ROOT + dotzSubDir + leefFolderName, HOME + dotzSubDir + leefFolderName)
-    
-    if silentFlag {
-      command.Run()
-    }else{
-      out, _ := command.Output()
-      fmt.Printf("%s\n", out)
-    }
-    return DOTZ_ROOT + dotzSubDir + leefFolderName ,nil
-    
-  }else{
-    return "", ErrInputFileTypeIsNotFonund
-  }
+	} else if FolderExists(filePath) {
+		leefFolderName := fileName
+		exec.Command("mv", filePath, DOTZ_ROOT+dotzSubDir+leefFolderName).Run()
+
+		command := exec.Command("ln", "-sv", DOTZ_ROOT+dotzSubDir+leefFolderName, HOME+dotzSubDir+leefFolderName)
+
+		if silentFlag {
+			command.Run()
+		} else {
+			out, _ := command.Output()
+			fmt.Printf("%s\n", out)
+		}
+		return DOTZ_ROOT + dotzSubDir + leefFolderName, nil
+
+	} else {
+		return "", ErrInputFileTypeIsNotFonund
+	}
 }
 
 func ParseFilePath(path string) (string, string) {
@@ -155,7 +148,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "dotz"
 	app.Version = "0.1.0"
-	app.Usage = "macOS backup and restore dotfiles"
+	app.Usage = "Manage dotfiles and more"
 	app.Authors = []cli.Author{
 		cli.Author{
 			Name:  "magcho",
@@ -166,8 +159,8 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			// dotz project root
-			Name:  "dotzRoot, r",
-			Usage: "project root path",
+			Name:  "dotzRoot",
+			Usage: "dotz project root path",
 			// Value:       "~/.dotz/", // default
 			Destination: &DOTZ_ROOT,
 			EnvVar:      "DOTZ_ROOT",
@@ -175,6 +168,7 @@ func main() {
 		cli.StringFlag{
 			// 環境変数からの引き継ぎ
 			Name:        "HOME",
+			Usage:       "sysmtem user home directory. When especially needed only, Do this option",
 			Destination: &HOME,
 			EnvVar:      "HOME",
 		},
@@ -190,8 +184,8 @@ func main() {
 			HOME = HOME + "/"
 		}
 
-		if FileExists(DOTZ_ROOT + "dotzconfig.toml") {
-			CONFIG = ReadDotzConf(DOTZ_ROOT + "dotzconfig.toml")
+		if FileExists(DOTZ_ROOT + DOTZ_CONFIG_FILENAME) {
+			CONFIG = ReadDotzConf(DOTZ_ROOT + DOTZ_CONFIG_FILENAME)
 		}
 
 		return nil
@@ -201,24 +195,14 @@ func main() {
 		{
 			Name:    "init",
 			Aliases: []string{"i"},
-			Usage:   "init dotz project",
+			Usage:   "Init dotz project",
 			Action: func(c *cli.Context) error {
-
-				// 引数がない時
-				// if c.NArg() < 1 {
-				// 	fmt.Println("require dotz project name")
-				// 	fmt.Println("dotz [init|i]")
-				// 	return nil
-
-				// }
 
 				if !FolderExists(DOTZ_ROOT) {
 					exec.Command("mkdir", DOTZ_ROOT).Run()
-					fmt.Println("> mkdir " + DOTZ_ROOT)
 				}
 				if !FolderExists(DOTZ_ROOT + "/.git") {
 					exec.Command("git", "-C", DOTZ_ROOT, "init").Run()
-					fmt.Println("> git init")
 				}
 
 				return nil
@@ -227,27 +211,43 @@ func main() {
 		{
 			Name:    "restore",
 			Aliases: []string{"r"},
-			Usage:   "restore dotz project and make symbric link",
-      Flags: []cli.Flag{
-        cli.BoolFlag{
-          Name: "silent, s",
-          Usage: "don't print ln info",
-        },
-      },
+			Usage:   "Restore dotz project and create symbric link",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "silent, s",
+					Usage: "Hide ln log",
+				},
+			},
 			Action: func(c *cli.Context) error {
 
-        for _, item := range CONFIG.Tracked.Files{
-          fmt.Println(item[0], item[1])
-          fmt.Println(replaceTilde2HomePath(item[0]), replaceSlash2DotzPath(item[1]))
+				for _, item := range CONFIG.Tracked.Files {
+					sLinkPath := replaceTilde2HomePath(item[0])
+					entityPath := replaceSlash2DotzPath(item[1])
 
-          command := exec.Command("ln","-sv")
-          if c.Bool("silent"){
-            command.Run()
-          }else{
-            out, _ := command.Output()
-            fmt.Println(out)
-          }
-        }
+					if FileExists(entityPath) {
+						command := exec.Command("ln", "-sv", entityPath, sLinkPath)
+						if c.Bool("silent") {
+							command.Run()
+						} else {
+							out, _ := command.Output()
+							fmt.Printf("%s\n", out)
+						}
+					} else if FolderExists(entityPath) {
+						if sLinkPath[len(sLinkPath)-1:len(sLinkPath)] == "/" {
+							sLinkPath = sLinkPath[:len(sLinkPath)-1]
+						}
+						command := exec.Command("ln", "-sv", entityPath, sLinkPath)
+						if c.Bool("silent") {
+							command.Run()
+						} else {
+							out, _ := command.Output()
+							fmt.Printf("%s\n", out)
+						}
+					} else {
+						return ErrInputFileTypeIsNotFonund
+					}
+
+				}
 				return nil
 			},
 		},
@@ -258,7 +258,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "push, p",
-					Usage: "enable `git push`",
+					Usage: "Enable `git push`",
 				},
 			},
 			Action: func(c *cli.Context) error {
@@ -274,12 +274,12 @@ func main() {
 					exec.Command("git", "-C", DOTZ_ROOT, "commit", "-m", commitMessage).Run()
 
 				} else {
-					fmt.Println("No change")
+					fmt.Println("> No change")
 				}
 
 				if c.Bool("push") {
 					exec.Command("git", "-C", DOTZ_ROOT, "push").Run()
-					fmt.Println("pushed")
+					fmt.Println("> git pushed")
 				}
 
 				return nil
@@ -294,10 +294,10 @@ func main() {
 					Name:  "silent, s",
 					Usage: "don't print link info",
 				},
-        cli.BoolFlag{
-          Name: "folder, f",
-          Usage: "manage in dotz of folder",
-        },
+				cli.BoolFlag{
+					Name:  "folder, f",
+					Usage: "manage in dotz of folder",
+				},
 			},
 			Action: func(c *cli.Context) error {
 
@@ -307,66 +307,54 @@ func main() {
 					return nil
 				}
 
-
-        
 				for i := 0; i < c.NArg(); i++ {
 					originFilePath := c.Args().Get(i)
-          
-          if FileExists(originFilePath){
-            // 指定された対象がファイルの時
-            dotzFilePath, err := createLink(originFilePath, DOTZ_ROOT, !c.Bool("silent"))
 
-            if err != ErrAlreadyFile{
-              CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
-                replaceHomePath2Tilde(originFilePath),
-                replaceDotzPath2Slash(dotzFilePath),
-              }) 
-            }
-            
-          }else if FolderExists(originFilePath){
-            // 指定された対象がフォルダの時
+					if FileExists(originFilePath) {
+						// 指定された対象がファイルの時
+						dotzFilePath, err := createLink(originFilePath, DOTZ_ROOT, c.Bool("silent"))
 
-            // 引数で渡した時に最後に/をつけるかつけないかのゆらぎを統一
-            // abc/def/ -> abc/def
-            if originFilePath[len(originFilePath) - 1 :len(originFilePath)] == "/"{
-              originFilePath = originFilePath[:len(originFilePath) - 1]
-            }
+						if err != ErrAlreadyFile {
+							CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
+								replaceHomePath2Tilde(originFilePath),
+								replaceDotzPath2Slash(dotzFilePath),
+							})
+						}
 
-            
-            if c.Bool("folder"){
-              // fodler オプションを渡している
-              dotzFolderPath, err :=createLink(originFilePath, DOTZ_ROOT, c.Bool("silent"))
+					} else if FolderExists(originFilePath) {
+						// 指定された対象がフォルダの時
 
-              if err != ErrAlreadyFile{
-                CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
-                  replaceHomePath2Tilde(originFilePath + "/"),
-                  replaceDotzPath2Slash(dotzFolderPath),
-                })
-              }
-            }
-          }else{
-            return ErrFilesNotFound
-          }
+						// 引数で渡した時に最後に/をつけるかつけないかのゆらぎを統一
+						// abc/def/ -> abc/def
+						if originFilePath[len(originFilePath)-1:len(originFilePath)] == "/" {
+							originFilePath = originFilePath[:len(originFilePath)-1]
+						}
+
+						if c.Bool("folder") {
+							// fodler オプションを渡している
+							dotzFolderPath, err := createLink(originFilePath, DOTZ_ROOT, c.Bool("silent"))
+
+							if err != ErrAlreadyFile {
+								CONFIG.Tracked.Files = append(CONFIG.Tracked.Files, []string{
+									replaceHomePath2Tilde(originFilePath + "/"),
+									replaceDotzPath2Slash(dotzFolderPath),
+								})
+							}
+						} else {
+							fmt.Println("Require -f option for folder tracking")
+						}
+					} else {
+						return ErrFilesNotFound
+					}
 				}
-        
-        WriteDotzConf(CONFIG, DOTZ_ROOT+"dotzconfig.toml")
-        
-        
+
+				WriteDotzConf(CONFIG, DOTZ_ROOT + DOTZ_CONFIG_FILENAME)
+
 				return nil
 			},
 		},
 	}
 
-
-
-
-  app.Action = func(c *cli.Context) error {
-    fmt.Println(FolderExists("/Users/magcho/sample/sample.txt/"))
-    return nil
-  }
-
-
-  
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Println(err)
