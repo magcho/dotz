@@ -9,12 +9,17 @@ jobs:
     name: Build
     runs-on: macOS-latest
     steps:
-
-    - name: Set up Go 1.12
-      uses: actions/setup-go@v1
-      with:
-        go-version: 1.12
-      id: go
+      - uses: actions/checkout@master
+      - uses: actions/setup-go@v1
+        with:
+          go-version: '1.13' # The Go version to download (if necessary) and use.
+    
+    
+#     - name: Set up Go 1.12
+#       uses: actions/setup-go@v1
+#       with:
+#         go-version: 1.12
+#       id: go
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
