@@ -9,7 +9,6 @@ jobs:
     name: Build
     runs-on: macOS-latest
     steps:
-      - uses: actions/checkout@master
       - uses: actions/setup-go@v1
         with:
           go-version: '1.13' # The Go version to download (if necessary) and use.
