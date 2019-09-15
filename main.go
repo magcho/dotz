@@ -151,22 +151,22 @@ func convertFullPath(origin string) (string, error) {
 	if strings.HasPrefix(origin, HOME) {
 		// フルパスが入力された時
 		return origin, nil
-    
+
 	} else if strings.HasPrefix(origin, "../") {
 		// 相対パスで上のディレクトリが指定されたとき
 		n := strings.Count(origin, "../")
 		basePath := strings.Join(dirArr[:len(dirArr)-n], "/")
 		relativePath := strings.Replace(origin, "../", "", -1)
 		return basePath + "/" + relativePath, nil
-    
+
 	} else if strings.HasPrefix(origin, "./") {
 		// 相対パスでカレントディレクトリ以下が指定された時
 		return strings.Replace(origin, "./", pwd+"/", 1), nil
-    
+
 	} else if FileExists(pwd+`/`+origin) || FolderExists(pwd+`/`+origin) {
 		// 直接ファイル名が入力された時
 		return pwd + "/" + origin, nil
-    
+
 	}
 	return "", ErrInputFileTypeIsNotFonund
 }
@@ -253,6 +253,12 @@ func main() {
 					entityPath := replaceSlash2DotzPath(item[1])
 
 					if FileExists(entityPath) {
+						sLinkSubDir, _ := ParseFilePath(sLinkPath)
+						sLinkSubDir = HOME + sLinkSubDir
+						if !FolderExists(sLinkSubDir) {
+							exec.Command("mkdir", "-p", sLinkSubDir).Run()
+						}
+
 						command := exec.Command("ln", "-sv", entityPath, sLinkPath)
 						if c.Bool("silent") {
 							command.Run()
