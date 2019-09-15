@@ -68,9 +68,9 @@ func FolderExists(filename string) bool {
 
 func FileExists(filename string) bool {
 	if f, err := os.Stat(filename); os.IsNotExist(err) || f.IsDir() {
-    return false
+		return false
 	} else {
-    return true
+		return true
 	}
 }
 func createLink(filePath string, DOTZ_ROOT string, silentFlag bool) (dotzPath string, err error) {
@@ -141,6 +141,34 @@ func replaceDotzPath2Slash(origin string) string {
 }
 func replaceSlash2DotzPath(origin string) string {
 	return strings.Replace(origin, "//", DOTZ_ROOT, 1)
+}
+
+func convertFullPath(origin string) (string, error) {
+	i, _ := exec.Command("pwd").Output()
+	pwd := string(i[:len(i)-1]) // 末端に\nがあるので消してstringにキャスト
+	dirArr := strings.Split(pwd, "/")
+
+	if strings.HasPrefix(origin, HOME) {
+		// フルパスが入力された時
+		return origin, nil
+    
+	} else if strings.HasPrefix(origin, "../") {
+		// 相対パスで上のディレクトリが指定されたとき
+		n := strings.Count(origin, "../")
+		basePath := strings.Join(dirArr[:len(dirArr)-n], "/")
+		relativePath := strings.Replace(origin, "../", "", -1)
+		return basePath + "/" + relativePath, nil
+    
+	} else if strings.HasPrefix(origin, "./") {
+		// 相対パスでカレントディレクトリ以下が指定された時
+		return strings.Replace(origin, "./", pwd+"/", 1), nil
+    
+	} else if FileExists(pwd+`/`+origin) || FolderExists(pwd+`/`+origin) {
+		// 直接ファイル名が入力された時
+		return pwd + "/" + origin, nil
+    
+	}
+	return "", ErrInputFileTypeIsNotFonund
 }
 
 func main() {
@@ -288,7 +316,7 @@ func main() {
 		{
 			Name:    "track",
 			Aliases: []string{"t"},
-			Usage:   "file append into dotz project",
+			Usage:   "Track files for dotz project",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "silent, s",
@@ -309,6 +337,11 @@ func main() {
 
 				for i := 0; i < c.NArg(); i++ {
 					originFilePath := c.Args().Get(i)
+
+					originFilePath, err := convertFullPath(originFilePath)
+					if err != nil {
+						return err
+					}
 
 					if FileExists(originFilePath) {
 						// 指定された対象がファイルの時
@@ -348,12 +381,16 @@ func main() {
 					}
 				}
 
-				WriteDotzConf(CONFIG, DOTZ_ROOT + DOTZ_CONFIG_FILENAME)
+				WriteDotzConf(CONFIG, DOTZ_ROOT+DOTZ_CONFIG_FILENAME)
 
 				return nil
 			},
 		},
 	}
+
+	// app.Action = func(c *cli.Context) error {
+	// 	return nil
+	// }
 
 	err := app.Run(os.Args)
 	if err != nil {
