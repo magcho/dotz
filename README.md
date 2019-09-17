@@ -1,5 +1,11 @@
 # dotz
-macOS用のdotfiles管理cliツール
+
+<p align="center">
+  <img  src="https://github.com/magcho/dotz/raw/master/dotz-min.png">
+</p>
+<p align="center">
+Manage dotfiles for macOS  
+</p>
 
 
 ## install
