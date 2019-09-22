@@ -1,11 +1,9 @@
-# dotz
-
 <p align="center">
   <img  src="https://github.com/magcho/dotz/raw/master/dotz-min.png">
 </p>
-<p align="center">
+<p align="center"><b>
 Manage dotfiles for macOS  
-</p>
+</b></p>
 
 
 ## install
