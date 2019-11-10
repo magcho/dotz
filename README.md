@@ -18,7 +18,7 @@ brew install dotz
 Download dotz binary from [Github relase](https://github.com/magcho/dotz/releases),and move directory of $PATH.
 
 ### Self build
-Cloning this repository. Exec `go build main.go -o dotz` and move directory of $PATH.
+Cloning this repository. Exec `go build main.go -o dotz` and move directory into $PATH.
 
 
 ## Usage
