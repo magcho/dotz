@@ -15,7 +15,7 @@ brew install dotz
 ```
 
 ### Manually
-Download dotz binary from [Github relase](https://github.com/magcho/dotz/releases),and move directory of $PATH.
+Download dotz binary from [Github relase](https://github.com/magcho/dotz/releases),and move directory into $PATH.
 
 ### Self build
 Cloning this repository. Exec `go build main.go -o dotz` and move directory into $PATH.
@@ -24,7 +24,7 @@ Cloning this repository. Exec `go build main.go -o dotz` and move directory into
 ## Usage
 
 ### Init
-  Before setting DOTZ_ROOT env OR command parameter.
+  Before setting $DOTZ_ROOT or command parameter.
   ```
   dotz init [--DOTZ_ROOT xx]
   ```
@@ -34,8 +34,8 @@ Cloning this repository. Exec `go build main.go -o dotz` and move directory into
 
 ### Track
   ```
-  dotz track xx    // Tracking of file
-  dotz track -f xx // Tracking of folder
+  dotz track xx    // Tracking file
+  dotz track -f xx // Tracking folder
   ```
   1. Move xx to dotz project folder.
   1. Create xx file or folder symbolic link.
@@ -50,7 +50,7 @@ Cloning this repository. Exec `go build main.go -o dotz` and move directory into
 ---
 
 ### Restore
-  Before cloning dotz project into DOTZ_ROOT path and set env DOTZ_ROOT.
+  Before cloning dotz project into $DOTZ_ROOT path and set env ＄DOTZ_ROOT.
   ```
   dotz restore
   ```
