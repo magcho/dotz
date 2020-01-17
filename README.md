@@ -26,7 +26,8 @@ Cloning this repository. Exec `go build main.go -o dotz` and move directory into
 ### Init
   Before setting $DOTZ_ROOT or command parameter.
   ```
-  dotz init [--DOTZ_ROOT xx]
+  export DOTZ_ROOT=~/.dotz
+  dotz init
   ```
   
   1. Create dotz project folder into DOTZ_ROOT (default `~/.dotz`)
