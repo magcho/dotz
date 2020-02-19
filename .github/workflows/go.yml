@@ -4,7 +4,7 @@ jobs:
   build:
     name: Build-mac
     env:
-      - GO111MODULE: "on"
+      GO111MODULE: "on"
     runs-on: macos-latest
     steps:
       - name: Set up Go 1.13
