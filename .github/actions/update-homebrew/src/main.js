@@ -13,6 +13,7 @@ function main() {
   const formulaFileName = core.getInput("formula_file_name");
   const assetPath = core.getInput("asset_path");
 
+  const versoin = core.getInput("tag_name").replace(/([\d.]+$)/, "$1");
   let sha256;
   check256(assetPath).then(sum => {
     sha256 = sum;
@@ -37,9 +38,9 @@ function main() {
     .then(contents => {
       fs.writeFileSync(`${formulaFileName}`, contents.join("\n"));
     })
+    .then(() => core.setOutput("formula_file_path", formulaFileName))
     .catch(err => {
       core.setFailed(err.message);
-      // console.log(err);
     });
 }
 
@@ -56,4 +57,8 @@ function check256(filePath) {
   });
 }
 
-main();
+try {
+  main();
+} catch (err) {
+  core.setFailed(err.message);
+}
