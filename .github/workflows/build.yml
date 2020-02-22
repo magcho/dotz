@@ -43,3 +43,12 @@ jobs:
           asset_name: dotz
           asset_content_type: application/octet-stream
 
+      - name: update homebrew formula
+        id: update_homebrew_formula
+        uses: ./update-homebrew/
+        with:
+          formula_url: 'https://github.com/magcho/homebrew-magcho.git'
+          formula_file_name: 'dotz.rb'
+          asset_path: ./dotz
+        
+

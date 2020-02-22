@@ -1,0 +1,23 @@
+name: 'update homebrew formula'
+description: 'Update homebrew formula'
+
+inputs:
+  formula_url:
+    description: 'my formula repository url'
+    required: true
+  formula_file_name:
+    description: 'formula file path'
+    required: true
+  asset_path:
+    description: 'asset file path'
+    required: true
+
+outputs:
+  formula_file_path:
+    description: 'exported formula file'
+   
+
+
+runs:
+  using: 'node12'
+  main: './dist/main.js'
