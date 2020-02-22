@@ -1,0 +1,12 @@
+name: 'homebrew test'
+description: 'homebrew intsall formula test'
+
+input:
+  assets_path:
+    description: 'asset file path'
+    required: true
+
+runs: |
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  brew tap magcho/homebrew-magcho
+  brew update
