@@ -16,8 +16,6 @@ outputs:
   formula_file_path:
     description: 'exported formula file'
    
-
-
 runs:
   using: 'node12'
   main: './dist/index.js'
