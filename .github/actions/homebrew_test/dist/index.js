@@ -375,10 +375,11 @@ const core = __webpack_require__(470);
 
 async function main() {
   // await exec("sh .github/actions/homebrew_test/main.sh");
+  // https://github.com/magcho/homebrew-magcho.git
   const formulaName = core
     .getInput("formula_url")
     .replace("https://github.com/", "")
-    .replace(/\/homebrew-/, "")
+    .replace(/\/homebrew-/, "/")
     .replace(/\/$/, "")
     .replace(/.git$/, "");
   const formulaFilePath = core.getInput("formula_file_path");
