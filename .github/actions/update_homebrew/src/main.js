@@ -13,7 +13,7 @@ function main() {
   const formulaFileName = core.getInput("formula_file_name");
   const assetPath = core.getInput("asset_path");
 
-  const version = core.getInput("tag_name").replace(/([\d\.]+$)/, "$1");
+  const version = core.getInput("tag_name").replace(/.*?([\d+\.]+)/, "$1");
   let sha256;
   check256(assetPath).then(sum => {
     sha256 = sum;
