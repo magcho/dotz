@@ -1,4 +1,10 @@
-const execSync = require("child_prosess").execSync;
+const util = require("util");
+const childProcess = require("child_process");
+const exec = util.promisify(childProcess.exec);
 const core = require("@actions/core");
 
-execSync("sh ./entrypoint.sh").catch(err => core.setFailed(err.message));
+async function main() {
+  await exec("sh ./main.sh");
+}
+
+main().catch(err => core.setFailed(err.message));
