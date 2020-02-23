@@ -7,6 +7,6 @@ input:
     required: true
 
 runs: |
-  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
   brew tap magcho/homebrew-magcho
   brew update
