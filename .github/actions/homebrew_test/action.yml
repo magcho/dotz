@@ -6,6 +6,6 @@ input:
     description: 'asset file path'
     required: true
 
-steps:
-  - name: install
-    run: /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+runs:
+  using: 'node12'
+  main: './dist/index.js'
