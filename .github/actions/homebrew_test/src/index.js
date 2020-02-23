@@ -32,6 +32,7 @@ async function main() {
   if (result == null) {
     return Error("can not installed");
   }
+  return;
 }
 
 main().catch(err => core.setFailed(err.message));
