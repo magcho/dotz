@@ -5,7 +5,7 @@ const core = require("@actions/core");
 
 async function main() {
   await console.log("pwd");
-  await exec("sh ../main.sh");
+  await exec("sh .github/actions/homebrew_test/main.sh");
 }
 
 main().catch(err => core.setFailed(err.message));
