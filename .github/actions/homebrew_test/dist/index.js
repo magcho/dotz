@@ -374,7 +374,8 @@ const exec = util.promisify(childProcess.exec);
 const core = __webpack_require__(470);
 
 async function main() {
-  await exec("sh ./main.sh");
+  await console.log("pwd");
+  await exec("sh .github/actions/homebrew_test/main.sh");
 }
 
 main().catch(err => core.setFailed(err.message));
