@@ -46,6 +46,9 @@ jobs:
           asset_name: dotz
           asset_content_type: application/octet-stream
 
+      - name: echo formula
+        run: echo dotz.rb
+
       - name: update homebrew formula
         id: update_homebrew_formula
         uses: ./.github/actions/update_homebrew
