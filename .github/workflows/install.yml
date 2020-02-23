@@ -1,6 +1,6 @@
 name: homebrew
 
-on: [push]
+# on: [push]
 
 jobs:
   build:
