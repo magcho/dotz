@@ -24,6 +24,8 @@ function main() {
     ""
   )}/master/${formulaFileName}`;
 
+  core.debug(`version: ${version}\nsha256 ${sha256}`);
+
   fetch(url)
     .then(res => res.text())
     .then(formula =>
