@@ -6,6 +6,6 @@ input:
     description: 'asset file path'
     required: true
 
-runs:
-  using: 'node12'
-  main: './dist/index.js'
+runs: pwd
+  # using: 'node12'
+  # main: './dist/index.js'
