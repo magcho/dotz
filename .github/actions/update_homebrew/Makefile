@@ -12,3 +12,5 @@ run:
 
 clean:
 	rm -rf formulaRepo
+	rm dotz
+	rm dotz.rb
