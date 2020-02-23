@@ -4,6 +4,7 @@ const exec = util.promisify(childProcess.exec);
 const core = require("@actions/core");
 
 async function main() {
+  await console.log("pwd");
   await exec("sh ./main.sh");
 }
 
