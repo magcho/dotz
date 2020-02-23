@@ -32,7 +32,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Release ${{ github.ref }}
-          draft: true
+          draft: false
           prerelease: false
 
       - name: upload release binary
