@@ -447,7 +447,7 @@ function main() {
  */
 function check256(filePath) {
   return new Promise((resolve, reject) => {
-    checksum.file(filePath, (err, sum) => {
+    checksum.file(filePath, { algorithm: "sha256" }, (err, sum) => {
       resolve(sum);
     });
   });
