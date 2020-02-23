@@ -5,6 +5,10 @@ input:
   assets_path:
     description: 'asset file path'
     required: true
+  formula_repo_url:
+    description: 'formula repository path'
+    required: true
+    
 
 runs:
   using: 'node12'

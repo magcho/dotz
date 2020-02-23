@@ -60,5 +60,5 @@ jobs:
         uses: ./.github/actions/homebrew_test
         with:
           formula_file_path: ${{ steps.update_homebrew_formula.outputs.formula_file_path }}
-          
-
+          formula_url: 'https://github.com/magcho/homebrew-magcho'
+          command_name: 'dotz'
