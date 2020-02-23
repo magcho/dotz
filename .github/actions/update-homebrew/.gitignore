@@ -1,5 +1,3 @@
-node_modules/
-.log/
 # Logs
 logs
 *.log

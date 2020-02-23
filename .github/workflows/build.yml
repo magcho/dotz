@@ -55,3 +55,10 @@ jobs:
           asset_path: ./dotz
           tag_name: ${{ github.ref }}
 
+      - name: homebrew formula test
+        id: homebrew_formula_test
+        uses: ./.github/actions/homebrew_test
+        with:
+          formula_file_path: ${{ steps.update_homebrew_formula.outputs.formula_file_path }}
+          
+
