@@ -425,13 +425,12 @@ function main() {
   fetch(url)
     .then(res => res.text())
     .then(formula =>
-      formula
-        .split("\n")
-        .map(line =>
-          line
-            .replace(/^(\s+:revision\s*=>\s*)"([\da-z]+)"/, `$1"${revision}"`)
-            .replace(/^(\s+)sha256\s+"([a-z\d\.]+)"/, `$1sha256 "${sha256}"`)
-        )
+      formula.split("\n").map(line =>
+        line
+          .replace(/^(\s+:tag\s*=>\s*)"v([\d+\.]+)"/, `$1"v${version}"`)
+          .replace(/^(\s+:revision\s*=>\s*)"([\da-z]+)"/, `$1"${revision}"`)
+          .replace(/^(\s+)sha256\s+"([a-z\d\.]+)"/, `$1sha256 "${sha256}"`)
+      )
     )
     .then(contents => {
       fs.writeFileSync(`${formulaFileName}`, contents.join("\n"));
