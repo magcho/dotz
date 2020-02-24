@@ -4,12 +4,18 @@ const exec = util.promisify(childProcess.exec);
 const core = require("@actions/core");
 const fs = require("fs");
 
-function setAuth(userName, pass) {
-  const text = `machine github.com
-login ${userName}
-password ${pass}
-`;
-  fs.writeFile("~/.netrc", text, err => core.setFailed(err.message));
+async function setAuth(repoUrl, userName, pass) {
+  const repo =
+    repoUrl
+      .replace(/\/$/, "")
+      .replace(/\.git$/, "")
+      .replace(/^https:\/\//) + ".git";
+  const gitConfFile = fs.readFile(`.github/actions/`, (err, data) => {
+    if (err) {
+      core.setFailed(err.message);
+    }
+    data.replace(repo, `${userName}:${pass}${repoUrl}`);
+  });
 }
 
 async function main() {
@@ -24,8 +30,8 @@ async function main() {
   };
 
   setAuth(input.githubUserName, input.githubSecretsToken);
-  await exec(`git config --global user.name '${authorName}'`);
-  await exec(`git config --global user.email '${authorEmail}'`);
+  await exec(`git config --global user.name '${input.authorName}'`);
+  await exec(`git config --global user.email '${input.authorEmail}'`);
   await exec(
     `git -C ${input.formulaPath} add ${input.formulaPath}/${input.formulaFilePath}`
   );
@@ -34,4 +40,6 @@ async function main() {
   return;
 }
 
-main().catch(err => core.setFailed(err.message));
+// main().catch(err => core.setFailed(err.message));
+
+setAuth("asdf", "asdf");

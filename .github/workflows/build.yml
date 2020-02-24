@@ -47,9 +47,6 @@ jobs:
           asset_name: dotz
           asset_content_type: application/octet-stream
 
-      - name: echo formula
-        run: echo dotz.rb
-
       - name: update homebrew formula
         id: update_homebrew_formula
         uses: ./.github/actions/update_homebrew
@@ -58,18 +55,7 @@ jobs:
           formula_file_name: 'dotz.rb'
           asset_path: ./dotz
           tag_name: ${{ github.ref }}
-          revision: ${{ github.sha }}
-
-      - name: upload formula file
-        id: upload_formula_file
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dotz.rb
-          asset_name: dotz.rb
-          asset_content_type: application/octet-stream 
+          revision: ${{ github.sha }} 
 
       - name: homebrew formula test
         id: homebrew_test
@@ -84,7 +70,7 @@ jobs:
         with:
           formula_path: ${{ steps.homebrew_test.outputs.formula_path }}
           github_username: magcho
-          github_secrets_token: ${{ secrets.github_secrets_token }}
+          github_secrets_token: ${{ secrets.github_personal_acces_token }}
           formula_file_path: dotz.rb
           
           
