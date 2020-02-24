@@ -379,7 +379,7 @@ function setAuth(userName, pass) {
 login ${userName}
 password ${pass}
 `;
-  fs.writeFile("~/.netrc", text);
+  fs.writeFile("~/.netrc", text, err => core.setFailed(err.message));
 }
 
 async function main() {
