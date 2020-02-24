@@ -24,12 +24,18 @@ async function main() {
     githubSecretsToken: core.getInput("github_secrets_token"),
     githubUserName: core.getInput("github_username"),
     formulaFilePath: core.getInput("formula_file_path"),
+    formulaUrl: core.getInput("formula_url"),
     authorName: core.getInput("author_name"),
     authorEmail: core.getInput("author_email"),
     commitMessage: core.getInput("commit_message")
   };
 
-  setAuth(input.githubUserName, input.githubSecretsToken);
+  setAuth(
+    input.formulaFilePath,
+    input.formulaUrl,
+    input.githubUserName,
+    input.githubSecretsToken
+  );
   await exec(`git config --global user.name '${input.authorName}'`);
   await exec(`git config --global user.email '${input.authorEmail}'`);
   await exec(
@@ -40,6 +46,6 @@ async function main() {
   return;
 }
 
-// main().catch(err => core.setFailed(err.message));
+main().catch(err => core.setFailed(err.message));
 
-setAuth("asdf", "asdf");
+// setAuth("asdf", "asdf");

@@ -14,6 +14,9 @@ input:
   formula_file_path:
     description: 'formula file path'
     required: true
+  formula_url:
+    description: 'repository url'
+    required: true
   author_name:
     description: 'git commit author name'
     required: false
