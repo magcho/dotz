@@ -31,4 +31,4 @@ input:
       
 runs:
   using: node12
-  main: ./dist/inex.js
+  main: ./dist/index.js
