@@ -1,0 +1,34 @@
+name: 'create pull request formula'
+description: 'create homebrew formula repository'
+
+input:
+  formula_path:
+    description: 'added tap formula path'
+    required: true
+  github_secrets_token:
+    description: 'github secrets user token'
+    required: true
+  github_username:
+    description: 'github user name'
+    required: true
+  formula_file_path:
+    description: 'formula file path'
+    required: true
+  author_name:
+    description: 'git commit author name'
+    required: false
+    default: 'github-actions'
+  author_email:
+    description: 'git commit email'
+    required: false
+    default: ''
+  commit_message:
+    description: 'commit message'
+    required: false
+    default: |
+      update formula
+    
+      
+runs:
+  using: node12
+  main: ./dist/inex.js

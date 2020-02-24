@@ -372,40 +372,47 @@ const util = __webpack_require__(669);
 const childProcess = __webpack_require__(129);
 const exec = util.promisify(childProcess.exec);
 const core = __webpack_require__(470);
+const fs = __webpack_require__(747);
+
+function setAuth(userName, pass) {
+  const text = `machine github.com
+login ${userName}
+password ${pass}
+`;
+  fs.writeFile("~/.netrc", text);
+}
 
 async function main() {
-  // await exec("sh .github/actions/homebrew_test/main.sh");
-  // https://github.com/magcho/homebrew-magcho.git
-  const formulaName = core
-    .getInput("formula_url")
-    .replace("https://github.com/", "")
-    .replace(/\/homebrew-/, "/")
-    .replace(/\/$/, "")
-    .replace(/.git$/, "");
-  const formulaFilePath = core.getInput("formula_file_path");
-  const commandName = core.getInput("command_name");
+  const input = {
+    formulaPath: core.getInput("formula_path"),
+    githubSecretsToken: core.getInput("github_secrets_token"),
+    githubUserName: core.getInput("github_username"),
+    formulaFilePath: core.getInput("formula_file_path"),
+    authorName: core.getInput("author_name"),
+    authorEmail: core.getInput("author_email"),
+    commitMessage: core.getInput("commit_message")
+  };
 
+  setAuth(input.githubUserName, input.githubSecretsToken);
+  await exec(`git config --global user.name '${authorName}'`);
+  await exec(`git config --global user.email '${authorEmail}'`);
   await exec(
-    '/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'
+    `git -C ${input.formulaPath} add ${input.formulaPath}/${input.formulaFilePath}`
   );
-  await exec(`brew tap ${formulaName}`);
-  await exec("brew update");
-  const formulaPath = await exec(`brew --repository ${formulaName}`).stdout;
-  core.setOutput("formula_path", formulaPath);
-  await exec(`cp ${formulaFilePath} ${formulaPath}`);
-
-  await exec(`brew audit ${commandName} --fix`);
-  await exec(`brew style ${formulaFilePath} --fix`);
-
-  await exec(`brew install ${commandName}`);
-
-  await exec(`which ${commandName}`);
-  await exec(`brew rm ${commandName}`);
+  await exec(`git -C ${input.formulaPath} commit -m '${commitMessage}'`);
+  await exec(`git -C ${input.formulaPath} push`);
   return;
 }
 
 main().catch(err => core.setFailed(err.message));
 
+
+/***/ }),
+
+/***/ 747:
+/***/ (function(module) {
+
+module.exports = require("fs");
 
 /***/ })
 

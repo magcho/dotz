@@ -25,10 +25,6 @@ function main() {
     ""
   )}/master/${formulaFileName}`;
 
-  // debug
-  core.setOutput("version", version);
-  core.setOutput("sha256", sha256);
-
   fetch(url)
     .then(res => res.text())
     .then(formula =>
