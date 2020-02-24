@@ -31,7 +31,7 @@ async function main() {
   };
 
   setAuth(
-    input.formulaFilePath,
+    input.formulaPath,
     input.formulaUrl,
     input.githubUserName,
     input.githubSecretsToken

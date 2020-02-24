@@ -68,7 +68,7 @@ jobs:
       - name: create PR formula
         uses: ./.github/actions/create_pr_formula
         with:
-          formula_path: https://github.com/magcho/homebrew-magcho
+          formula_path: ${{ steps.homebrew_test.outputs.formula_path }}
           github_username: magcho
           github_secrets_token: ${{ secrets.github_personal_acces_token }}
           formula_file_path: dotz.rb
