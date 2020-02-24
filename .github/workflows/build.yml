@@ -85,5 +85,6 @@ jobs:
           formula_path: ${{ steps.homebrew_test.outputs.formula_path }}
           github_username: magcho
           github_secrets_token: ${{ secrets.github_secrets_token }}
+          formula_file_path: dotz.rb
           
           
