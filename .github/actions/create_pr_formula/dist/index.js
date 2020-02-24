@@ -374,13 +374,13 @@ const exec = util.promisify(childProcess.exec);
 const core = __webpack_require__(470);
 const fs = __webpack_require__(747);
 
-async function setAuth(repoUrl, userName, pass) {
+async function setAuth(formulaPath, repoUrl, userName, pass) {
   const repo =
     repoUrl
       .replace(/\/$/, "")
       .replace(/\.git$/, "")
       .replace(/^https:\/\//) + ".git";
-  const gitConfFile = fs.readFile(`.github/actions/`, (err, data) => {
+  const gitConfFile = fs.readFile(`${formulaPath}/.git/config`, (err, data) => {
     if (err) {
       core.setFailed(err.message);
     }
