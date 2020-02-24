@@ -32,6 +32,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           body: |
             Release ${{ github.ref }}
+            revision ${{ github.revision }}
           draft: false
           prerelease: false
 
@@ -76,5 +77,7 @@ jobs:
           version: ${{ steps.update_homebrew_formula.outputs.version }}
           sha256: ${{ steps.update_homebrew_formula.outputs.sha256 }}
           formula_file_path: ${{ steps.update_homebrew_formula.outputs.formula_file_path }}
-          formula_url: 'https://github.com/magcho/homebrew-magcho'
-          command_name: 'dotz'
+          formula_url: https://github.com/magcho/homebrew-magcho
+          command_name: dotz
+          revision: ${{ github.revision }}
+          

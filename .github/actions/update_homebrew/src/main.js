@@ -18,25 +18,25 @@ function main() {
   check256(assetPath).then(sum => {
     sha256 = sum;
   });
+  const revision = core.getInput("revision");
 
   const url = `https://raw.githubusercontent.com/${formulaUrl.replace(
     "https://github.com/",
     ""
   )}/master/${formulaFileName}`;
 
-  core.setOutput("version", version);
-  core.setOutput("sha256", sha256);
+  // core.setOutput("version", version);
+  // core.setOutput("sha256", sha256);
 
   fetch(url)
     .then(res => res.text())
     .then(formula =>
-      formula
-        .split("\n")
-        .map(line =>
-          line
-            .replace(/^(\s+)version\s+"([\d\.]+)"/, `$1version "${version}"`)
-            .replace(/^(\s+)sha256\s+"([a-z\d\.]+)"/, `$1sha256 "${sha256}"`)
-        )
+      formula.split("\n").map(line =>
+        line
+          .replace(/^(\s+:tag\s*=>\s*)"v([\d+\.]+)"/, `$1"v${version}",`)
+          .replace(/^(\s+:revision\s*=>\s*)"([\da-z]+)"/, `$1"${revision}"`)
+          .replace(/^(\s+)sha256\s+"([a-z\d\.]+)"/, `$1sha256 "${sha256}"`)
+      )
     )
     .then(contents => {
       fs.writeFileSync(`${formulaFileName}`, contents.join("\n"));
