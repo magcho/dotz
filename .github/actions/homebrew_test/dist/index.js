@@ -398,10 +398,8 @@ async function main() {
 
   await exec(`brew install ${commandName}`);
 
-  const result = await exec(`which ${commandName}`).stdout.match("not found");
-  if (result == null) {
-    return Error("can not installed");
-  }
+  await exec(`which ${commandName}`);
+  await exec(`brew rm ${commandName}`);
   return;
 }
 
