@@ -374,18 +374,17 @@ const exec = util.promisify(childProcess.exec);
 const core = __webpack_require__(470);
 const fs = __webpack_require__(747);
 
-async function setAuth(formulaPath, repoUrl, userName, pass) {
-  const repo =
-    repoUrl
-      .replace(/\/$/, "")
-      .replace(/\.git$/, "")
-      .replace(/^https:\/\//) + ".git";
-  const gitConfFile = fs.readFile(`${formulaPath}/.git/config`, (err, data) => {
-    if (err) {
-      core.setFailed(err.message);
-    }
-    data.replace(repo, `${userName}:${pass}${repoUrl}`);
-  });
+async function setAuth(userName, pass) {
+  const repoGithubUrl = await exec("git config --get remote.origin.url").stdout;
+  const replaceGitUrl = repoGithubUrl.replace(
+    "github.com",
+    `${userName}:${pass}@github.com`
+  );
+  const formulaInstalledRepoPath = await exec(
+    `${userName}/homebrew-${userName}`
+  ).stdout;
+  await exec(`git conifg remote.origin.url ${replaceGitUrl}`);
+  return;
 }
 
 async function main() {
@@ -400,12 +399,7 @@ async function main() {
     commitMessage: core.getInput("commit_message")
   };
 
-  setAuth(
-    input.formulaPath,
-    input.formulaUrl,
-    input.githubUserName,
-    input.githubSecretsToken
-  );
+  setAuth(input.githubUserName, input.githubSecretsToken);
   await exec(`git config --global user.name '${input.authorName}'`);
   await exec(`git config --global user.email '${input.authorEmail}'`);
   await exec(
