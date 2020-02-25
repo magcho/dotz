@@ -375,7 +375,6 @@ const core = __webpack_require__(470);
 const fs = __webpack_require__(747);
 
 async function setAuth(userName, pass) {
-  const repoGithubUrl = await exec("git config --get remote.origin.url").stdout;
   const replaceGitUrl = repoGithubUrl.replace(
     "github.com",
     `${userName}:${pass}@github.com`
@@ -400,13 +399,14 @@ async function main() {
   };
 
   setAuth(input.githubUserName, input.githubSecretsToken);
+  const repoGithubUrl = await exec("git config --get remote.origin.url").stdout;
   await exec(`git config --global user.name '${input.authorName}'`);
   await exec(`git config --global user.email '${input.authorEmail}'`);
   await exec(
     `git -C ${input.formulaPath} add ${input.formulaPath}/${input.formulaFilePath}`
   );
-  await exec(`git -C ${input.formulaPath} commit -m '${commitMessage}'`);
-  await exec(`git -C ${input.formulaPath} push`);
+  await exec(`git -C ${repoGithubUrl} commit -m '${commitMessage}'`);
+  await exec(`git -C ${repoGithubUrl} push`);
   return;
 }
 
