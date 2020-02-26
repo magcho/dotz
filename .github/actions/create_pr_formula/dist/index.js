@@ -387,7 +387,7 @@ function main() {
 
   const userName = input.githubUserName;
   const pass = input.githubSecretsToken;
-  const binName = input.formulaFilename.replace(/^(.*)\.rb/, $1);
+  const binName = input.formulaFilename.replace(/^(.*)\.rb/, "$1");
 
   let brewClonedPath;
   exec(`brew --repository ${userName}/${userName}`)
