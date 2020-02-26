@@ -44,7 +44,7 @@ function main() {
     )
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFileName}`
+        `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFilename}`
       )
     )
     .then(() =>
