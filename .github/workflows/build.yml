@@ -68,8 +68,7 @@ jobs:
       - name: create PR formula
         uses: ./.github/actions/create_pr_formula
         with:
-          formula_cloned_path: ${{ steps.homebrew_test.outputs.formula_cloned_path }}
-          formula_file_path: ${{ steps.homebrew_test.outputs.formula_file_path }} 
+          formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }} 
           github_username: magcho
           github_secrets_token: ${{ secrets.github_personal_acces_token }}
           

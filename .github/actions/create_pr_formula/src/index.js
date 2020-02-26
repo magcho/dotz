@@ -4,43 +4,56 @@ const exec = util.promisify(childProcess.exec);
 const core = require("@actions/core");
 const fs = require("fs");
 
-async function setAuth(userName, pass) {
-  const repoGithubUrl = await exec(`brew --repository ${userName}/${userName}`)
-    .stdout;
-  const replaceGitUrl = repoGithubUrl.replace(
-    "github.com",
-    `${userName}:${pass}@github.com`
-  );
-  const formulaInstalledRepoPath = await exec(
-    `${userName}/homebrew-${userName}`
-  ).stdout;
-  await exec(`git conifg remote.origin.url ${replaceGitUrl}`);
-  return;
-}
-
-async function main() {
+function main() {
   const input = {
-    githubSecretsToken: core.getInput("github_secrets_token"),
+    formulaFilename: core.getInput("formula_filename"),
     githubUserName: core.getInput("github_username"),
-    formulaFilePath: core.getInput("formula_file_path"),
+    githubSecretsToken: core.getInput("github_secrets_token"),
     formulaUrl: core.getInput("formula_url"),
     authorName: core.getInput("author_name"),
     authorEmail: core.getInput("author_email"),
     commitMessage: core.getInput("commit_message")
   };
 
-  await setAuth(input.githubUserName, input.githubSecretsToken);
+  const userName = input.githubUserName;
+  const pass = input.githubSecretsToken;
 
-  await exec(`git config --global user.name '${input.authorName}'`);
-  await exec(`git config --global user.email '${input.authorEmail}'`);
-  await exec(
-    `git -C ${input.formulaFilePath} add ${input.formulaFilePath}/${input.formulaFilePath}`
-  );
-  await exec(`git -C ${repoGithubUrl} commit -m '${commitMessage}'`);
-  await exec(`git -C ${repoGithubUrl} push`);
-  return;
+  let brewClonedPath;
+  exec(`brew --repository ${userName}/${userName}`)
+    .then(({ stdout, stderr }) => {
+      brewClonedPath = stdout.replace(/\n/, "");
+      return exec(`git -C ${brewClonedPath} config --get remote.origin.url`);
+    })
+    .then(({ stdout, stderr }) => {
+      const gitConfigUrl = stdout
+        .replace(/\n/, "")
+        .replace("github.com", `${userName}:${pass}@github.com`);
+      return exec(
+        `git -C ${brewClonedPath} config --local remote.origin.url $gitConfigUrl`
+      );
+    })
+    .then(() =>
+      exec(
+        `git -C ${brewClonedPath} config --local user.name '${input.authorName}'`
+      )
+    )
+    .then(() =>
+      exec(
+        `git -C ${brewClonedPath} config --local user.email '${input.authorEmail}`
+      )
+    )
+    .then(() =>
+      exec(
+        `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFileName}`
+      )
+    )
+    .then(() =>
+      exec(`git -C ${brewClonedPath} commit -m '${input.commitMessage}'`)
+    )
+    .then(() => exec(`git push`))
+    .catch(err => core.setFailed(err.message));
 }
 
-main().catch(err => core.setFailed(err.message));
+main();
 
 // setAuth("asdf", "asdf");

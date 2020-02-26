@@ -2,20 +2,14 @@ name: 'create pull request formula'
 description: 'create homebrew formula repository'
 
 input:
-  brew_tap_name:
-    description: 'homebrew tap name'
-    required: true
-  github_secrets_token:
-    description: 'github secrets user token'
+  formula_filename:
+    description: 'formula recipe file name'
     required: true
   github_username:
     description: 'github user name'
     required: true
-  formula_file_path:
-    description: 'formula file path'
-    required: true
-  formula_url:
-    description: 'repository url'
+  github_secrets_token:
+    description: 'github secrets user token'
     required: true
   author_name:
     description: 'git commit author name'
