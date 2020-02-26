@@ -403,7 +403,7 @@ async function main() {
   await exec(`git config --global user.name '${input.authorName}'`);
   await exec(`git config --global user.email '${input.authorEmail}'`);
   await exec(
-    `git -C ${input.formulaPath} add ${input.formulaPath}/${input.formulaFilePath}`
+    `git -C ${repoGithubUrl} add ${input.formulaPath}/${input.formulaFilePath}`
   );
   await exec(`git -C ${repoGithubUrl} commit -m '${commitMessage}'`);
   await exec(`git -C ${repoGithubUrl} push`);
