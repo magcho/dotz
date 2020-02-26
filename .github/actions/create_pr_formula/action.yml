@@ -2,8 +2,8 @@ name: 'create pull request formula'
 description: 'create homebrew formula repository'
 
 input:
-  formula_path:
-    description: 'added tap formula path'
+  brew_tap_name:
+    description: 'homebrew tap name'
     required: true
   github_secrets_token:
     description: 'github secrets user token'

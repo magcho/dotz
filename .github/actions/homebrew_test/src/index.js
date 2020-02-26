@@ -21,7 +21,6 @@ async function main() {
   await exec(`brew tap ${formulaName}`);
   await exec("brew update");
   const formulaPath = await exec(`brew --repository ${formulaName}`).stdout;
-  core.setOutput("formula_path", formulaPath);
   await exec(`cp ${formulaFilePath} ${formulaPath}`);
 
   await exec(`brew audit ${commandName} --fix`);
@@ -31,6 +30,9 @@ async function main() {
 
   await exec(`which ${commandName}`);
   await exec(`brew rm ${commandName}`);
+
+  core.setOutput("formula_cloned_path", formulaPath);
+  core.setOutput("formula_file_path", formulaFilePath);
   return;
 }
 
