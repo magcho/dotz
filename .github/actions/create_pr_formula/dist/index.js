@@ -380,8 +380,7 @@ function main() {
     githubUserName: core.getInput("github_username"),
     githubSecretsToken: core.getInput("github_secrets_token"),
     formulaUrl: core.getInput("formula_url"),
-    authorName: core.getInput("author_name"),
-    authorEmail: core.getInput("author_email"),
+    commitMail: core.getInput("commit_mail"),
     commitMessage: core.getInput("commit_message")
   };
 
@@ -405,12 +404,12 @@ function main() {
     })
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} config --global user.name '${input.authorName}'`
+        `git -C ${brewClonedPath} config --global user.name '${input.githubUserName}'`
       )
     )
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} config --global user.email '${input.authorEmail}'`
+        `git -C ${brewClonedPath} config --global user.email '${input.commitMail}'`
       )
     )
     .then(() =>

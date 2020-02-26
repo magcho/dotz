@@ -11,14 +11,9 @@ input:
   github_secrets_token:
     description: 'github secrets user token'
     required: true
-  author_name:
-    description: 'git commit author name'
-    required: false
-    default: 'github-actions'
-  author_email:
+  commit_mail:
     description: 'git commit email'
-    required: false
-    default: ''
+    required: true
   commit_message:
     description: 'commit message'
     required: false

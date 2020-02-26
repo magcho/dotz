@@ -70,6 +70,7 @@ jobs:
         with:
           formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }} 
           github_username: magcho
+          commit_mail: mail@magcho.com
           github_secrets_token: ${{ secrets.github_personal_acces_token }}
           
           
