@@ -17,6 +17,7 @@ function main() {
 
   const userName = input.githubUserName;
   const pass = input.githubSecretsToken;
+  const binName = input.formulaFilename.replace(/^(.*)\.rb/, $1);
 
   let brewClonedPath;
   exec(`brew --repository ${userName}/${userName}`)
@@ -34,12 +35,12 @@ function main() {
     })
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} config --local user.name '${input.authorName}'`
+        `git -C ${brewClonedPath} config --global user.name '${input.authorName}'`
       )
     )
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} config --local user.email '${input.authorEmail}'`
+        `git -C ${brewClonedPath} config --global user.email '${input.authorEmail}'`
       )
     )
     .then(() =>
@@ -47,9 +48,7 @@ function main() {
         `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFilename}`
       )
     )
-    .then(() =>
-      exec(`git -C ${brewClonedPath} commit -m '${input.commitMessage}'`)
-    )
+    .then(() => exec(`git -C ${brewClonedPath} commit -m 'update ${binName}'`))
     .then(() => exec(`git push`))
     .catch(err => core.setFailed(err.message));
 }
