@@ -29,7 +29,7 @@ function main() {
         .replace(/\n/, "")
         .replace("github.com", `${userName}:${pass}@github.com`);
       return exec(
-        `git -C ${brewClonedPath} config --local remote.origin.url $gitConfigUrl`
+        `git -C ${brewClonedPath} config --local remote.origin.url ${gitConfigUrl}`
       );
     })
     .then(() =>
@@ -39,7 +39,7 @@ function main() {
     )
     .then(() =>
       exec(
-        `git -C ${brewClonedPath} config --local user.email '${input.authorEmail}`
+        `git -C ${brewClonedPath} config --local user.email '${input.authorEmail}'`
       )
     )
     .then(() =>
