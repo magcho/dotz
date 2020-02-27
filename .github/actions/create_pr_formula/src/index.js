@@ -5,6 +5,8 @@ const core = require("@actions/core");
 const fs = require("fs");
 
 function main() {
+  core.debug("start main()");
+  core.info(12345);
   const input = {
     formulaFilename: core.getInput("formula_filename"),
     githubUserName: core.getInput("github_username"),

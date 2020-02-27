@@ -375,6 +375,8 @@ const core = __webpack_require__(470);
 const fs = __webpack_require__(747);
 
 function main() {
+  core.debug("start main()");
+  core.info(12345);
   const input = {
     formulaFilename: core.getInput("formula_filename"),
     githubUserName: core.getInput("github_username"),
