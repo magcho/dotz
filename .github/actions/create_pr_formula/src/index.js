@@ -66,5 +66,3 @@ function main() {
 }
 
 main();
-
-// setAuth("asdf", "asdf");
