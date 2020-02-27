@@ -64,7 +64,10 @@ function main() {
       core.info(stdout.replace(/\n/, ""));
       return;
     })
-    .catch(err => core.setFailed(err.message));
+    .catch(err => {
+      core.info(err.message);
+      core.setFailed(err.message);
+    });
 }
 
 main();
