@@ -393,6 +393,8 @@ function main() {
   let brewClonedPath;
   exec(`brew --repository ${userName}/${userName}`)
     .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       brewClonedPath = stdout.replace(/\n/, "");
       return exec(`git -C ${brewClonedPath} config --get remote.origin.url`);
     })
@@ -406,32 +408,38 @@ function main() {
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return exec(
         `git -C ${brewClonedPath} config --global user.name '${input.githubUserName}'`
       );
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return exec(
         `git -C ${brewClonedPath} config --global user.email '${input.commitMail}'`
       );
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return exec(
         `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFilename}`
       );
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return exec(`git -C ${brewClonedPath} commit -m "update ${binName}"`);
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return exec(`git push`);
     })
     .then(({ stdout, stderr }) => {
       core.info(stdout.replace(/\n/, ""));
+      core.info(stderr.replace(/\n/, ""));
       return;
     })
     .catch(err => {
