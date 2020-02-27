@@ -32,23 +32,36 @@ function main() {
         `git -C ${brewClonedPath} config --local remote.origin.url ${gitConfigUrl}`
       );
     })
-    .then(() =>
-      exec(
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return exec(
         `git -C ${brewClonedPath} config --global user.name '${input.githubUserName}'`
-      )
-    )
-    .then(() =>
-      exec(
+      );
+    })
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return exec(
         `git -C ${brewClonedPath} config --global user.email '${input.commitMail}'`
-      )
-    )
-    .then(() =>
-      exec(
+      );
+    })
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return exec(
         `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFilename}`
-      )
-    )
-    .then(() => exec(`git -C ${brewClonedPath} commit -m "update ${binName}"`))
-    .then(() => exec(`git push`))
+      );
+    })
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return exec(`git -C ${brewClonedPath} commit -m "update ${binName}"`);
+    })
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return exec(`git push`);
+    })
+    .then(({ stdout, stderr }) => {
+      core.info(stdout.replace(/\n/, ""));
+      return;
+    })
     .catch(err => core.setFailed(err.message));
 }
 
