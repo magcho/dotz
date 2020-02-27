@@ -11,7 +11,6 @@ function main() {
     formulaFilename: core.getInput("formula_filename"),
     githubUserName: core.getInput("github_username"),
     githubSecretsToken: core.getInput("github_secrets_token"),
-    formulaUrl: core.getInput("formula_url"),
     commitMail: core.getInput("commit_mail"),
     commitMessage: core.getInput("commit_message")
   };
