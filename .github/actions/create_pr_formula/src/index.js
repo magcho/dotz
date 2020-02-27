@@ -32,6 +32,7 @@ function main() {
       const gitConfigUrl = stdout
         .replace(/\n/, "")
         .replace("github.com", `${userName}:${pass}@github.com`);
+      core.info(gitConfigUrl);
       return exec(
         `git -C ${brewClonedPath} config --local remote.origin.url ${gitConfigUrl}`
       );
