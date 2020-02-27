@@ -417,7 +417,7 @@ function main() {
         `git -C ${brewClonedPath} add ${brewClonedPath}/${input.formulaFilename}`
       )
     )
-    .then(() => exec(`git -C ${brewClonedPath} commit -m 'update ${binName}'`))
+    .then(() => exec(`git -C ${brewClonedPath} commit -m "update ${binName}"`))
     .then(() => exec(`git push`))
     .catch(err => core.setFailed(err.message));
 }
