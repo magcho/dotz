@@ -19,5 +19,6 @@ git config --global user.email ${COMMIT_MAIL}
 git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/github.com/${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@gitub.com/")
 
 git add .
-git commit -m "update ${BIN_NAME}"
+echo $(git status)
+echo $(git commit -m "update ${BIN_NAME}")
 # git push
