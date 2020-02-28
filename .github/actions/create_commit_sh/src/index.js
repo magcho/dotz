@@ -11,7 +11,8 @@ function main() {
     core.getInput("commit_mail")
   ];
   const args = input.join(" ");
-  exec(`sh ./.github/actions/create_commit_sh/main.sh ${args}`)
+  // exec(`sh ./.github/actions/create_commit_sh/main.sh ${args}`)
+  exec(`sh ./.github/actions/create_commit_sh/echo.sh magcho`)
     .then(({ stdout, stderr }) => {
       core.info(stdout);
       console.log(stdout);
