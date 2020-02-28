@@ -11,7 +11,10 @@ COMMIT_MAIL="$4"
 # set env variables
 BIN_NAME="${FORMULA_FILENAME%%.rb}"
 
+
 cd "$(brew --repository ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
+
+echo ${FORMULA_FILENAME}
 
 git config --global user.name ${GITHUB_USERNAME}
 git config --global user.email ${COMMIT_MAIL}
