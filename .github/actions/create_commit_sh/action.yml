@@ -13,11 +13,6 @@ input:
   commit_mail:
     description: 'git commit email'
     required: true
-  commit_message:
-    description: 'commit message'
-    required: false
-    default: |
-      update formula
 
 runs:
   using: node12

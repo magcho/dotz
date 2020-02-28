@@ -7,7 +7,6 @@ FORMULA_FILENAME="$1"
 GITHUB_USERNAME="$2"
 GITHUB_SECRETS_TOKEN="$3"
 COMMIT_MAIL="$4"
-COMMIT_MESSAGE="$5"
 
 # set env variables
 BIN_NAME="${FORMULA_FILENAME%%.rb}"
@@ -21,7 +20,7 @@ git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/gi
 
 git add .
 git commit -F- <<EOF
-${COMMIT_MESSAGE}
+update ${BIN_NAME}
 EOF
 
 git push

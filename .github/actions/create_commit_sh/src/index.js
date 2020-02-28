@@ -8,8 +8,7 @@ function main() {
     core.getInput("formula_filename"),
     core.getInput("github_username"),
     core.getInput("github_secrets_token"),
-    core.getInput("commit_mail"),
-    core.gitInput("commit_message")
+    core.getInput("commit_mail")
   ];
   const args = input.join(" ");
   exec(`./.github/actions/create_commit_sh/main.sh ${args}`)
