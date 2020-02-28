@@ -14,6 +14,7 @@ function main() {
   exec(`sh ./.github/actions/create_commit_sh/main.sh ${args}`)
     .then(({ stdout, stderr }) => {
       core.info(stdout);
+      console.log(stdout);
       if (stderr != "") {
         core.warning(stderr);
       }
