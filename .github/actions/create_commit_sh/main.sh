@@ -13,12 +13,12 @@ BIN_NAME="${FORMULA_FILENAME%%.rb}"
 
 cd "$(brew --repository ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
 
-# git config --global user.name ${GITHUB_USERNAME}
-# git config --global user.email ${COMMIT_MAIL}
+git config --global user.name ${GITHUB_USERNAME}
+git config --global user.email ${COMMIT_MAIL}
 
-# git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/github.com/${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@gitub.com/")
+git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/github.com/${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@gitub.com/")
 
-# git add .
+git add .
 # git commit -F- <<EOF
 # update ${BIN_NAME}
 # EOF
