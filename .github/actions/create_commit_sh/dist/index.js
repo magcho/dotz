@@ -393,6 +393,7 @@ function main() {
       core.setFailed(err.message);
     });
 }
+main();
 
 
 /***/ })
