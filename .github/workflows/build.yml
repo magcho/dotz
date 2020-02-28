@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: go build -v .
+        run: go build -v -o ./build/dotz .
 
       - name: create release
         id: create_release
@@ -65,13 +65,29 @@ jobs:
           formula_url: https://github.com/magcho/homebrew-magcho
           command_name: dotz
 
-      - name: create PR formula
-        uses: ./.github/actions/create_pr_formula
+      # - name: create PR formula
+      #   uses: ./.github/actions/create_pr_formula
+      #   with:
+      #     formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }} 
+      #     github_username: magcho
+      #     commit_mail: mail@magcho.com
+      #     github_secrets_token: ${{ secrets.github_personal_acces_token }}
+
+      # - name: create commit
+      #   uses: ./.github/actions/create_commit
+      #   with:
+      #     formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }}
+      #     github_username: magcho
+      #     github_secrets_token: ${{ secrets.github_personal_acces_token }}
+      #     commit_mail: mail@magcho.com
+
+      - name: create commit
+        uses: ./.github/actions/create_commit_sh
         with:
-          formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }} 
+          formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }}
           github_username: magcho
-          commit_mail: mail@magcho.com
           github_secrets_token: ${{ secrets.github_personal_acces_token }}
+          commit_mail: mail@magcho.com
           
           
           
