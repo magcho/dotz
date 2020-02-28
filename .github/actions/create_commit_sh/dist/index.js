@@ -381,7 +381,7 @@ function main() {
     core.getInput("commit_mail")
   ];
   const args = input.join(" ");
-  exec(`./.github/actions/create_commit_sh/main.sh ${args}`)
+  exec(`sh ./.github/actions/create_commit_sh/main.sh ${args}`)
     .then(({ stdout, stderr }) => {
       core.info(stdout);
       if (stderr != "") {
