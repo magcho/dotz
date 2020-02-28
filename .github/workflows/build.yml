@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build
-        run: go build -v -o ./build/dotz .
+        run: go build -v .
 
       - name: create release
         id: create_release
