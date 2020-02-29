@@ -12,7 +12,7 @@ FORMULA_FILE_NAME="$2"
 brew tap $USER_NAME/$USER_NAME
 brew update
 
-brew install awk
+brew install gawk
 
 cp $FORMULA_FILE_NAME $(brew --repo $USER_NAME/$USER_NAME)
 
