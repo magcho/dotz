@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+CURRENT_PATH="$(pwd)"
+
 # set args variables
 FORMULA_FILENAME="$1"
 GITHUB_USERNAME="$2"
@@ -24,4 +26,7 @@ git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/gi
 git add .
 echo $(git status)
 echo $(git commit -m "update ${BIN_NAME}")
-# git push
+git push
+
+
+cd $CURRENT_PATH
