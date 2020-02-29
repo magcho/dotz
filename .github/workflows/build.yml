@@ -58,7 +58,7 @@ jobs:
           revision: ${{ github.sha }}
 
       - name: upload formula recipe
-        uses: upload_release_asset
+        uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITUB_TOKEN }}
         with:
