@@ -12,9 +12,11 @@ COMMIT_MAIL="$4"
 
 # set env variables
 BIN_NAME="${FORMULA_FILENAME%%.rb}"
+TAP_PATH="$(brew --repo ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
 
+cp $FORMULA_FILENAME $TAP_PATH
 
-cd "$(brew --repository ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
+cd $TAP_PATH
 
 git config --global user.name $GITHUB_USERNAME
 git config --global user.email $COMMIT_MAIL
@@ -23,9 +25,7 @@ REPO="$(git config --get remote.origin.url)"
 REPO=${REPO#https://}
 REMOTE_REPO="https://${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@${REPO}"
 
-pwd
-ls -la
-git add -A
+git add .
 echo $(git status)
 echo $(git commit -m "update ${BIN_NAME}")
 git push "${REMOTE_REPO}"
