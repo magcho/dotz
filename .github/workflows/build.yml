@@ -55,7 +55,17 @@ jobs:
           formula_file_name: 'dotz.rb'
           asset_path: ./dotz
           tag_name: ${{ github.ref }}
-          revision: ${{ github.sha }} 
+          revision: ${{ github.sha }}
+
+      - name: upload formula recipe
+        uses: upload_release_asset
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dotz.rb
+          asset_name: dotz.rb
+          asset_content_type: application/octet-stream
 
       - name: homebrew formula test
         id: homebrew_test
