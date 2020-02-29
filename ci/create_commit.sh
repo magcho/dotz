@@ -19,7 +19,8 @@ cd "$(brew --repository ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
 git config --global user.name $GITHUB_USERNAME
 git config --global user.email $COMMIT_MAIL
 
-REPO="${$(git config remote.origin.url)#https://}"
+REPO="$(git config --get remote.origin.url)"
+REPO=${REPO#https://}
 REMOTE_REPO="https://${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@${REPO}"
 
 git add .
