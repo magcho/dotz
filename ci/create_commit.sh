@@ -19,11 +19,12 @@ cd "$(brew --repository ${GITHUB_USERNAME}/${GITHUB_USERNAME})"
 git config --global user.name $GITHUB_USERNAME
 git config --global user.email $COMMIT_MAIL
 
-git config remote.origin.url $(git config --get remote.origin.url | sed -e "s/github.com/${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@gitub.com/")
+REPO="${$(git config remote.origin.url)#https://}"
+REMOTE_REPO="https://${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@${REPO}"
 
 git add .
 echo $(git status)
 echo $(git commit -m "update ${BIN_NAME}")
-git push
+git push "${REMOTE_REPO}"
 
 cd $CURRENT_PATH
