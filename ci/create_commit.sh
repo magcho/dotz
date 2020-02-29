@@ -23,7 +23,9 @@ REPO="$(git config --get remote.origin.url)"
 REPO=${REPO#https://}
 REMOTE_REPO="https://${GITHUB_USERNAME}:${GITHUB_SECRETS_TOKEN}@${REPO}"
 
-git add .
+pwd
+ls -la
+git add -A
 echo $(git status)
 echo $(git commit -m "update ${BIN_NAME}")
 git push "${REMOTE_REPO}"
