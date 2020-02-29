@@ -17,6 +17,7 @@ brew install gawk
 cp $FORMULA_FILE_NAME $(brew --repo $USER_NAME/$USER_NAME)
 
 cd $(brew --repo $USER_NAME/$USER_NAME)
+cat $FORMULA_FILE_NAME
 
 # variables
 BIN_NAME="$(gawk 'match($0, /bin\.install\s+"(.*)"/, a) {print a[1]}' $FORMULA_FILE_NAME)"
@@ -27,6 +28,7 @@ brew style $FORMULA_FILE_NAME --fix
 
 brew install -f $BIN_NAME
 which $BIN_NAME
+brew info $BIN_NAME
 brew rm $BIN_NAME
 
 cd $CURRENT_PATH
