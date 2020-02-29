@@ -59,11 +59,11 @@ jobs:
 
       - name: homebrew formula test
         id: homebrew_test
-        runs: |
+        run: |
           sh ./ci/homebrew_test.sh "magcho" "dotz.rb"
 
       - name: create commit
-        runs: |
+        run: |
           sh ./ci/create_commit.sh "dotz.rb" "magcho" "${{ secrets.github_personal_acces_token }}" "mail@magcho.com"
         
         
