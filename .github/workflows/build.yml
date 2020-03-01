@@ -1,0 +1,77 @@
+name: build for mac
+on:
+  push:
+    tags:
+      - 'v*'
+jobs:
+  build:
+    name: build-mac
+    env:
+      GO111MODULE: "on"
+    runs-on: macos-latest
+    steps:
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.13
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v2
+
+      - name: Build
+        run: go build -v .
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release ${{ github.ref }}
+            revision ${{ github.revision }}
+          draft: false
+          prerelease: false
+
+      - name: upload release binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dotz
+          asset_name: dotz
+          asset_content_type: application/octet-stream
+
+      - name: update homebrew formula
+        id: update_homebrew_formula
+        uses: ./.github/actions/update_homebrew
+        with:
+          formula_url: 'https://github.com/magcho/homebrew-magcho'
+          formula_file_name: 'dotz.rb'
+          asset_path: ./dotz
+          tag_name: ${{ github.ref }}
+          revision: ${{ github.sha }}
+
+      - name: upload formula recipe
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dotz.rb
+          asset_name: dotz.rb
+          asset_content_type: application/octet-stream
+
+      - name: homebrew formula test
+        id: homebrew_test
+        run: |
+          sh ./ci/homebrew_test.sh "magcho" "dotz.rb"
+
+      - name: create commit
+        run: |
+          sh ./ci/create_commit.sh "dotz.rb" "magcho" "${{ secrets.github_personal_acces_token }}" "mail@magcho.com"
+          

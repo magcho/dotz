@@ -1,0 +1,21 @@
+name: 'homebrew test'
+description: 'homebrew intsall formula test'
+
+input:
+  assets_path:
+    description: 'asset file path'
+    required: true
+  formula_repo_url:
+    description: 'formula repository path'
+    required: true
+
+outputs:
+  formula_cloned_path:
+    description: 'homebrew tap cloned repository path'
+  formula_file_path:
+    description: 'formula recipe file'
+    
+
+runs:
+  using: 'node12'
+  main: './dist/index.js'
