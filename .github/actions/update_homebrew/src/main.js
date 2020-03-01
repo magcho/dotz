@@ -32,10 +32,7 @@ function main() {
         .split("\n")
         .map(line =>
           line
-            .replace(
-              /^(\s+)url\s+\/v([\d+\.]+)\/dotz/,
-              `$1url "https://github.com/magcho/dotz/releases/download/v${version}/dotz"`
-            )
+            .replace(/download\/v([\d+\.]+)\//, `download/v${version}/`)
             .replace(/^(\s+)sha256\s+"([a-z\d\.]+)"/, `$1sha256 "${sha256}"`)
         )
     )
