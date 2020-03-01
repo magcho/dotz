@@ -46,15 +46,6 @@ jobs:
           asset_name: dotz
           asset_content_type: application/octet-stream
 
-      # - name: update homebrew formula
-      #   env:
-      #     formula_repo_url: https://github.com/magcho/homebrew-magcho
-      #     formula_file_name: dotz.rb
-          
-            
-      #   run: |
-      #     sh ./ci/update_formula.sh 
-
       - name: update homebrew formula
         id: update_homebrew_formula
         uses: ./.github/actions/update_homebrew
@@ -83,31 +74,4 @@ jobs:
       - name: create commit
         run: |
           sh ./ci/create_commit.sh "dotz.rb" "magcho" "${{ secrets.github_personal_acces_token }}" "mail@magcho.com"
-        
-        
-      # - name: create PR formula
-      #   uses: ./.github/actions/create_pr_formula
-      #   with:
-      #     formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }} 
-      #     github_username: magcho
-      #     commit_mail: mail@magcho.com
-      #     github_secrets_token: ${{ secrets.github_personal_acces_token }}
-
-      # - name: create commit
-      #   uses: ./.github/actions/create_commit
-      #   with:
-      #     formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }}
-      #     github_username: magcho
-      #     github_secrets_token: ${{ secrets.github_personal_acces_token }}
-      #     commit_mail: mail@magcho.com
-
-      # - name: create commit
-      #   uses: ./.github/actions/create_commit_sh
-      #   with:
-      #     formula_filename: ${{ steps.homebrew_test.outputs.formula_file_path }}
-      #     github_username: magcho
-      #     github_secrets_token: ${{ secrets.github_personal_acces_token }}
-      #     commit_mail: mail@magcho.com
-          
-          
           
