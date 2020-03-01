@@ -46,24 +46,24 @@ jobs:
           asset_name: dotz
           asset_content_type: application/octet-stream
 
-      - name: update homebrew formula
-        env:
-          formula_repo_url: https://github.com/magcho/homebrew-magcho
-          formula_file_name: dotz.rb
+      # - name: update homebrew formula
+      #   env:
+      #     formula_repo_url: https://github.com/magcho/homebrew-magcho
+      #     formula_file_name: dotz.rb
           
             
-        run: |
-          sh ./ci/update_formula.sh 
+      #   run: |
+      #     sh ./ci/update_formula.sh 
 
-      # - name: update homebrew formula
-      #   id: update_homebrew_formula
-      #   uses: ./.github/actions/update_homebrew
-      #   with:
-      #     formula_url: 'https://github.com/magcho/homebrew-magcho'
-      #     formula_file_name: 'dotz.rb'
-      #     asset_path: ./dotz
-      #     tag_name: ${{ github.ref }}
-      #     revision: ${{ github.sha }}
+      - name: update homebrew formula
+        id: update_homebrew_formula
+        uses: ./.github/actions/update_homebrew
+        with:
+          formula_url: 'https://github.com/magcho/homebrew-magcho'
+          formula_file_name: 'dotz.rb'
+          asset_path: ./dotz
+          tag_name: ${{ github.ref }}
+          revision: ${{ github.sha }}
 
       - name: upload formula recipe
         uses: actions/upload-release-asset@v1
