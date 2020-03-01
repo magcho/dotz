@@ -14,7 +14,7 @@ brew update
 
 brew install gawk
 
-cp $FORMULA_FILE_NAME $(brew --repo $USER_NAME/$USER_NAME)
+cp -v $FORMULA_FILE_NAME $(brew --repo $USER_NAME/$USER_NAME)
 
 cd $(brew --repo $USER_NAME/$USER_NAME)
 cat $FORMULA_FILE_NAME
