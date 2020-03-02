@@ -5,6 +5,7 @@
 Manage dotfiles for macOS  
 </b></p>
 
+![build for mac](https://github.com/magcho/dotz/workflows/build%20for%20mac/badge.svg)
 
 ## install
 
