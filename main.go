@@ -14,6 +14,11 @@ import (
 	"time"
 )
 
+
+// ビルド時にバイナリのリリースバージョンを指定
+var dotzVersion string
+var releaseVersion string = strings.NewReplacer("refs/tags/v","").Replace(dotzVersion)
+
 var (
 	DOTZ_ROOT            string
 	HOME                 string
@@ -175,7 +180,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = "dotz"
-	app.Version = "0.1.1"
+	app.Version = releaseVersion
 	app.Usage = "Manage dotfiles and more"
 	app.Authors = []cli.Author{
 		cli.Author{
