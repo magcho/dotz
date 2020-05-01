@@ -11,13 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.2.2",
+    "@actions/core": "^1.2.4",
     "@actions/github": "^2.1.1",
     "checksum": "^0.1.1"
   },
   "devDependencies": {
-    "@zeit/ncc": "^0.21.1",
+    "@zeit/ncc": "^0.22.1",
     "eslint": "^6.8.0",
-    "prettier": "^1.19.1"
+    "prettier": "^2.0.5"
   }
 }

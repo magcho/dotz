@@ -11,9 +11,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@zeit/ncc": "^0.21.1"
+    "@zeit/ncc": "^0.22.1"
   },
   "dependencies": {
-    "@actions/core": "^1.2.2"
+    "@actions/core": "^1.2.4"
   }
 }
