@@ -1,5 +1,4 @@
-# ビルド済み実行バイナリを除去
-dotz
+dist/
 
 .DS_Store
 .log/
@@ -22,5 +21,3 @@ dotz
 
 # Dependency directories (remove the comment below to include it)
 vendor/
-
-
