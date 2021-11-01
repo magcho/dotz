@@ -10,7 +10,8 @@ jobs:
       GO111MODULE: "on"
     runs-on: ubuntu-latest
     strategy:
-      build-arch: ['amd64', 'arm64']
+      matrix:
+        build-arch: ['amd64', 'arm64']
 
     steps:
       - name: Set up Go
@@ -22,8 +23,8 @@ jobs:
       - name: Build
         run: make build dotz_ver=${{ github.ref }} -o dotz-darwin-${{ matrix.build-arch }}
         env:
-          - GOOS: 'darwin'
-          - GOARCH: ${{ matrix.build-arch }}
+          GOOS: 'darwin'
+          GOARCH: ${{ matrix.build-arch }}
 
       - name: create release
         id: create_release
